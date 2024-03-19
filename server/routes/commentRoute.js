@@ -1,0 +1,11 @@
+const express = require('express')
+const router = express.Router()
+const CommentController = require('../controllers/commentController')
+
+router.post('/comment', CommentController.topComment)
+router.post('/comment-reply', CommentController.commentReply)
+router.get('/get-comments', CommentController.getComment)
+router.get('/gettopcomments', CommentController.getTopLevelComments)
+router.delete('/deletecomment', CommentController.commentDelete)
+
+module.exports = router
