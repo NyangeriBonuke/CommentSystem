@@ -23,10 +23,10 @@ class CommentController{
         }
     }
 
-    async getComment(req, res){
+    async getReplyComment(req, res){
         try{
             const { commentId } = req.body
-            const comments = await CommentUseCase.getComments(commentId)
+            const comments = await CommentUseCase.getComment(commentId)
             res.status(200).send(comments)
         }
         catch(error){
@@ -52,6 +52,17 @@ class CommentController{
         }
         catch(error){
             res.status(500).send(`Controller error while deleting comments ${error}`)
+        }
+    }
+
+    async commentEdit(req, res){
+        try{
+            const {commentId, newContent} = req.body
+            const editedComment = await CommentUseCase.editComment(commentId, newContent)
+            res.status(200).send(editedComment)
+        }
+        catch(error){
+            res.status(500).send(`Controller error while editing comments ${error}`)
         }
     }
 }

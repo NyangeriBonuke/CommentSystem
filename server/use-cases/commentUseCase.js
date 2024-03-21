@@ -35,7 +35,7 @@ class CommentUseCase{
             const comments = await Comment.find({parent: commentId}).populate('children')
 
             for(const comment of comments){
-                comments.children = await this.getComments(comment._id)
+                comments.children = await this.getComment(comment._id)
             }
 
             return comments;
@@ -65,9 +65,28 @@ class CommentUseCase{
                 }
                 await Comment.findByIdAndDelete(commentId)
             }
+            else{
+                throw new Error("Comment not found")
+            }
         }
         catch(error){
             throw new Error(`Usecase delete comment ${error}`)
+        }
+    }
+
+    async editComment(commentId, newContent){
+        try{
+            const existingComment = await Comment.findById(commentId)
+            if(!existingComment){
+                throw new Error('Comment not found')
+            }
+
+            existingComment.content = newContent
+            const updatedComment = await existingComment.save()
+            return updatedComment;
+        }
+        catch(error){
+            throw new Error(`Usecase edit comment ${error}`)
         }
     }
 }
