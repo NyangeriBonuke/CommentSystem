@@ -30,14 +30,10 @@ class CommentUseCase{
         }
     }
 
-    async getComment(commentId = null){
+
+    async findComment(){
         try{
-            const comments = await Comment.find({parent: commentId}).populate('children')
-
-            for(const comment of comments){
-                comments.children = await this.getComment(comment._id)
-            }
-
+            const comments = await Comment.find({})
             return comments;
         }
         catch(error){
@@ -45,29 +41,33 @@ class CommentUseCase{
         }
     }
 
-    async getTopComments(){
-        try{
-            const topLevelComments = await Comment.find({ parent: null }).populate('children')
-            return topLevelComments
-        }
-        catch(error){
-            throw new Error(`Usecase get all comments error ${error}`)
-        }
-    }
-
+    
     async deleteComment(commentId){
         try{
             const comment = await Comment.findById(commentId)
 
-            if(comment){
-                for(const childId of comment.children){
-                    await this.deleteComment(childId)
-                }
-                await Comment.findByIdAndDelete(commentId)
-            }
-            else{
+            if(!comment){
                 throw new Error("Comment not found")
             }
+
+            if(comment.children.length > 0){
+                comment.deleted = true
+                await comment.save()
+                return(`Commented marked as deleted`) 
+            }
+
+            if(comment.parent){
+                const parentComment = await Comment.findById(comment.parent)
+                parentComment.children = parentComment.children.filter(childId => childId.toString() !== commentId)
+                await parentComment.save()
+
+                if(parentComment.deleted && parentComment.children.length === 0){
+                    await parentComment.deleteOne()
+                }
+            }
+            await comment.deleteOne()
+            await Comment.updateMany({parent: comment._id}, {$set: {parent: null}})
+            return(`Comment Deleted Successfully`)
         }
         catch(error){
             throw new Error(`Usecase delete comment ${error}`)

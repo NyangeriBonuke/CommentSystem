@@ -2,11 +2,12 @@ const express = require('express')
 const router = express.Router()
 const CommentController = require('../controllers/commentController')
 
+router.get('/test', (req, res) => {res.send('Hello World')})
+
 router.post('/comment', CommentController.topComment)
 router.post('/comment-reply', CommentController.commentReply)
-router.get('/get-comments', CommentController.getReplyComment)
-router.get('/gettopcomments', CommentController.getTopLevelComments)
-router.delete('/deletecomment', CommentController.commentDelete)
-router.put('/editcomment', CommentController.commentEdit)
+router.get('/comment', CommentController.getComment)
+router.delete('/comment', CommentController.commentDelete)
+router.put('/comment', CommentController.commentEdit)
 
 module.exports = router

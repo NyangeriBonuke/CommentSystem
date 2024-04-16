@@ -16,7 +16,11 @@ const CommentSchema = new mongoose.Schema({
     children: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
-    }]
+    }],
+    deleted: {
+        type: Boolean,
+        default: false
+    }
 },
 {
     timestamps: true

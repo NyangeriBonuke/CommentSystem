@@ -23,10 +23,10 @@ class CommentController{
         }
     }
 
-    async getReplyComment(req, res){
+    
+    async getComment(req, res){
         try{
-            const { commentId } = req.body
-            const comments = await CommentUseCase.getComment(commentId)
+            const comments = await CommentUseCase.findComment()
             res.status(200).send(comments)
         }
         catch(error){
@@ -34,16 +34,7 @@ class CommentController{
         }
     }
 
-    async getTopLevelComments(req, res){
-        try{
-            const topComments = await CommentUseCase.getTopComments()
-            res.status(200).send(topComments)
-        }
-        catch(error){
-            res.status(500).send(`Controller error while getting top comments ${error}`)
-        }
-    }
-
+    
     async commentDelete(req, res){
         try{
             const { commentId } = req.body
