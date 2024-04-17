@@ -31,10 +31,14 @@ class CommentUseCase{
     }
 
 
-    async findComment(){
+    async findComment(parentId = null){
         try{
-            const comments = await Comment.find({})
-            return comments;
+            const comments = await Comment.find({parent: parentId})
+            const nestedComments = await Promise.all(comments.map(async comment => {
+                const children = await this.findComment(comment._id)
+                return { ...comment.toObject(), children }
+            }))
+            return nestedComments
         }
         catch(error){
             throw new Error(`Usecase error ${error}`)

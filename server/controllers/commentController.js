@@ -26,7 +26,8 @@ class CommentController{
     
     async getComment(req, res){
         try{
-            const comments = await CommentUseCase.findComment()
+            const {parentId} = req.body
+            const comments = await CommentUseCase.findComment(parentId)
             res.status(200).send(comments)
         }
         catch(error){
